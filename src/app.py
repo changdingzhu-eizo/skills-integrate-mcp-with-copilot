@@ -6,6 +6,7 @@ for extracurricular activities at Mergington High School.
 """
 
 from fastapi import FastAPI, HTTPException
+import re
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 import os
@@ -98,6 +99,13 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
+    # Validate email format (strong validation)
+    email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+    if not email_regex.match(email):
+        raise HTTPException(status_code=400, detail="Invalid email format")
+
+    # (Future) Registration number validation can be added here
+
     # Validate student is not already signed up
     if email in activity["participants"]:
         raise HTTPException(
@@ -119,6 +127,13 @@ def unregister_from_activity(activity_name: str, email: str):
 
     # Get the specific activity
     activity = activities[activity_name]
+
+    # Validate email format (strong validation)
+    email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+    if not email_regex.match(email):
+        raise HTTPException(status_code=400, detail="Invalid email format")
+
+    # (Future) Registration number validation can be added here
 
     # Validate student is signed up
     if email not in activity["participants"]:
